@@ -46,7 +46,8 @@ public class RouteFinder {
     @Produces(MediaType.APPLICATION_JSON)
     public Route getOptimalRoute(@QueryParam("origin") String origin,
                                  @QueryParam("destination") String destination,
-                                 @QueryParam("waypoints") String waypoints){
+                                 @QueryParam("waypoints") String waypoints
+                                ){
         org.apache.log4j.BasicConfigurator.configure();
         logger.setLevel(INFO);
 
