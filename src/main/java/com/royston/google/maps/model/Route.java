@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "origin",
         "waypoint",
+        "waypointName",
         "destination",
         "time",
         "distance"
@@ -25,8 +26,8 @@ public class Route {
     @JsonProperty("destination")
     private String destination;
 
-    @JsonProperty("time")
-    private int time;
+    @JsonProperty("timeHoursMins")
+    private String timeHoursMins;
 
     @JsonProperty("distance")
     private int distance;
@@ -61,14 +62,14 @@ public class Route {
         this.destination = destination;
     }
 
-    @JsonProperty("time")
-    public int getTime() {
-        return time;
+    @JsonProperty("timeHoursMins")
+    public String getTimeHoursMins() {
+        return timeHoursMins;
     }
 
-    @JsonProperty("time")
-    public void setTime(int time) {
-        this.time = time;
+    @JsonProperty("timeHoursMins")
+    public void setTimeHoursMins(String time) {
+        this.timeHoursMins = time;
     }
 
     @JsonProperty("distance")
@@ -79,5 +80,31 @@ public class Route {
     @JsonProperty("distance")
     public void setDistance(int distance) {
         this.distance = distance;
+    }
+
+    @JsonProperty("hasTolls")
+    private boolean hasTolls;
+
+    @JsonProperty("hasTolls")
+    public boolean isHasTolls() {
+        return hasTolls;
+    }
+
+    @JsonProperty("hasTolls")
+    public void setHasTolls(boolean hasTolls) {
+        this.hasTolls = hasTolls;
+    }
+
+    @JsonProperty("time")
+    private int time;
+
+    @JsonProperty("time")
+    public int getTime() {
+        return time;
+    }
+
+    @JsonProperty("time")
+    public void setTime(int time) {
+        this.time = time;
     }
 }

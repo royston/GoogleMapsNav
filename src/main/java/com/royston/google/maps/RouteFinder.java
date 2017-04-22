@@ -14,6 +14,8 @@ import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.log4j.Logger;
 
+import javax.measure.Measure;
+import javax.measure.converter.UnitConverter;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,6 +24,10 @@ import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
 
+import static javax.measure.unit.NonSI.MILE;
+import static javax.measure.unit.NonSI.MINUTE;
+import static javax.measure.unit.SI.KILOMETER;
+import static javax.measure.unit.SI.METER;
 import static org.apache.log4j.Level.INFO;
 import static org.apache.log4j.Level.TRACE;
 
@@ -86,17 +92,26 @@ public class RouteFinder {
         for(int legNo =0; legNo < legs.length(); ++legNo){
             JSONObject leg = legs.getJSONObject(legNo);
             int distance = leg.getJSONObject("distance").getInt("value");
+            UnitConverter toMiles = METER.getConverterTo(MILE);
+            distance = (int)toMiles.convert(Measure.valueOf(distance, METER).intValue(METER));
+
             int minutes = leg.getJSONObject("duration").getInt("value");
 
             totalDistance += distance;
             totalDuration += minutes;
+
         }
+
+        totalDuration =  totalDuration / 60;
+        int min = totalDuration % 60;
+        int hours = totalDuration / 60;
 
         Route route = new Route();
         route.setOrigin(origin);
         route.setDestination(destination);
         route.setWaypoint(waypoints);
         route.setDistance(totalDistance);
+        route.setTimeHoursMins(hours == 0 ? "" : hours + " hours, " + min + " mins");
         route.setTime(totalDuration);
         return route;
     }
