@@ -1,17 +1,18 @@
 package com.royston.google.maps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.royston.google.maps.model.Place;
+import com.royston.google.maps.model.Places;
 import com.royston.google.maps.model.google.Locations;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.client.Client;
+import com.sun.media.jfxmedia.Media;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -19,6 +20,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,13 +49,9 @@ public class Location {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Locations getLocationMatches(@QueryParam("location") String location){
+    public Places getLocationMatches(@QueryParam("location") String location){
         org.apache.log4j.BasicConfigurator.configure();
         logger.setLevel(INFO);
-        Locations cached = getCachedLocation(location);
-        if(cached != null){
-            return cached;
-        }
         Client client = Client.create();
         String apiUrl = config.getString("api.url");
         String apiKey = config.getString("api.key");
@@ -67,18 +66,25 @@ public class Location {
                     + response.getStatus());
         }
         String outputStr = response.getEntity(String.class);
-        ObjectMapper objectMapper = new ObjectMapper();
-        Locations output = null;
-        try {
-            output = objectMapper.readValue(outputStr, Locations.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        insertCache(location, outputStr);
+        JSONObject obj = new JSONObject(outputStr);
+        JSONArray predictions = obj.getJSONArray("predictions");
+        Place[] places = new Place[predictions.length()];
+        for(int i=0; i<predictions.length(); ++i){
+            JSONObject prediction = predictions.getJSONObject(i);
+            String placeId = prediction.getString("place_id");
+            JSONArray terms = prediction.getJSONArray("terms");
+            String name = terms.getJSONObject(0).getString("value");
+            String address = prediction.getString("description");
 
-        System.out.println("Output from Server .... \n");
-        System.out.println(output);
-        return output;
+            places[i] = new Place();
+            places[i].setPlaceId(placeId);
+            places[i].setName(name);
+            places[i].setAddress(address);
+        }
+        Places placesObj = new Places();
+        placesObj.setPlaces(places);
+
+        return placesObj;
     }
 
     private void insertCache(String location, String doc){
