@@ -11,7 +11,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "placeId",
         "name",
-        "address"
+        "address",
+        "lat",
+        "lng"
 })
 /**
  * Created by Royston on 4/14/2017.
@@ -20,10 +22,10 @@ public class Place {
     @JsonProperty("placeId")
     private String placeId;
 
-    @JsonProperty("latitude")
+    @JsonProperty("lat")
     private double latitude;
 
-    @JsonProperty("longitude")
+    @JsonProperty("lng")
     private double longitude;
 
     @JsonProperty("address")
@@ -32,22 +34,22 @@ public class Place {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("longitude")
+    @JsonProperty("lng")
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
-    @JsonProperty("longitude")
+    @JsonProperty("lng")
     public double getLongitude() {
         return longitude;
     }
 
-    @JsonProperty("latitude")
+    @JsonProperty("lat")
     public double getLatitude() {
         return latitude;
     }
 
-    @JsonProperty("latitude")
+    @JsonProperty("lat")
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
@@ -86,6 +88,8 @@ public class Place {
     public String toString() {
         return "Place{" +
                 "placeId='" + placeId + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 ", address='" + address + '\'' +
                 ", name='" + name + '\'' +
                 '}';

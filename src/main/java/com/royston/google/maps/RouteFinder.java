@@ -60,7 +60,7 @@ public class RouteFinder {
         Route route1 = getRoute(origin, destination, waypoints);
         Route route2 = getRoute(origin, waypoints, destination);
 
-        if(route1.getTime() < route2.getTime()){
+        if(1 == 1 || route1.getTime() < route2.getTime()){
             return route1;
         }
         return route2;
@@ -111,7 +111,7 @@ public class RouteFinder {
         route.setDestination(destination);
         route.setWaypoint(waypoints);
         route.setDistance(totalDistance);
-        route.setTimeHoursMins(hours == 0 ? "" : hours + " hours, " + min + " mins");
+        route.setTimeHoursMins(hours == 0 ? min + " mins" : hours + " hours, " + min + " mins");
         route.setTime(totalDuration);
         return route;
     }
